@@ -83,7 +83,7 @@
                 }
             }).then(snapshot => {
 
-                getDownloadURL(snapshot).then(url => {
+                getDownloadURL(imageRef).then(url => {
 
                     liff.sendMessages([{
                         type: 'text',
