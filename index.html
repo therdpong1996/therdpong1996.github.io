@@ -97,9 +97,10 @@
                         previewImageUrl: url
                     }]).then(() => {
                         console.log("Message sent");
-                        deleteObject(imageRef).then(() => {
-                            liff.closeWindow();
-                        })
+                        // deleteObject(imageRef).then(() => {
+                        //     liff.closeWindow();
+                        // })
+                        liff.closeWindow();
                     }).catch(error => {
                         console.log("Error sending message: " + error);
                     });
