@@ -71,7 +71,7 @@
             let message = $(this).find('input[name=message]').val()
             let image = $(this).find('input[name=image]')[0].files[0]
 
-            const imageRef = ref(storage, "images/" + image.name);
+            const imageRef = ref(storage, "images/" + profile.userId);
 
             uploadBytes(imageRef, image, {
                 metadata: {
@@ -89,17 +89,10 @@
                         type: 'text',
                         text: message
                     }, {
-                        type: 'text',
-                        text: url
-                    }, {
                         type: 'image',
                         originalContentUrl: url,
                         previewImageUrl: url
                     }]).then(() => {
-                        console.log("Message sent");
-                        // deleteObject(imageRef).then(() => {
-                        //     liff.closeWindow();
-                        // })
                         liff.closeWindow();
                     }).catch(error => {
                         console.log("Error sending message: " + error);
