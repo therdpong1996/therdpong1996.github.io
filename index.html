@@ -83,6 +83,8 @@
                 }
             }).then(snapshot => {
 
+                console.log(snapshot)
+
                 let url = snapshot.metadata.downloadURLs[0]
                 liff.sendMessages([{
                     type: 'text',
