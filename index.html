@@ -16,6 +16,7 @@
 
     <div class="container">
         <form id="line-message">
+            <input type="file" name="image">
             <input type="text" name="message" class="from-control">
             <button type="submit">ส่ง</button>
         </form>
@@ -31,7 +32,7 @@
     <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
-        import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
+        import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDuTUABGWT9yQCWua5A9LTDVe7DWlEVf-A",
@@ -46,6 +47,8 @@
         // Initialize Firebase
         const firebaseApp = initializeApp(firebaseConfig);
         const storage = getStorage(firebaseApp);
+
+        const imageRef = ref(storage, "images");
 
         const liff_id = "1656870852-kyrqq8vd"
         var profile = {};
@@ -68,19 +71,31 @@
 
             e.preventDefault()
             let message = $(this).find('input[name=message]').val()
+            let image = $(this).find('input[name=image]')[0].files[0]
 
-            liff.sendMessages([
-                {
-                    type: 'text',
-                    text: profile.displayName + ' ส่ง ' + message
-                },
-                {
-                    type: 'image',
-                    originalContentUrl: profile.pictureUrl,
-                    previewImageUrl: profile.pictureUrl
+            uploadBytes(imageRef, image, {
+                metadata: {
+                    contentType: image.type,
+                    customMetadata: {
+                        name: profile.displayName,
+                        uid: profile.userId
+                    }
                 }
-            ]).then(() => {
-                liff.closeWindow();
+            }).then(snapshot => {
+
+                let url = snapshot.metadata.downloadURLs[0]
+                liff.sendMessages([{
+                    type: 'text',
+                    text: message
+                }, {
+                    type: 'image',
+                    originalContentUrl: url,
+                    previewImageUrl: url
+                }]).then(() => {
+                    console.log('Message sent')
+                    liff.closeWindow();
+                })
+
             })
 
         })
