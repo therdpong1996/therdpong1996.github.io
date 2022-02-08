@@ -32,7 +32,7 @@
     <script type="module">
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
-        import { getStorage, ref, uploadBytes } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDuTUABGWT9yQCWua5A9LTDVe7DWlEVf-A",
@@ -47,8 +47,6 @@
         // Initialize Firebase
         const firebaseApp = initializeApp(firebaseConfig);
         const storage = getStorage(firebaseApp);
-
-        const imageRef = ref(storage, "images");
 
         const liff_id = "1656870852-kyrqq8vd"
         var profile = {};
@@ -73,6 +71,8 @@
             let message = $(this).find('input[name=message]').val()
             let image = $(this).find('input[name=image]')[0].files[0]
 
+            const imageRef = ref(storage, "images/" + image.name);
+
             uploadBytes(imageRef, image, {
                 metadata: {
                     contentType: image.type,
@@ -83,19 +83,24 @@
                 }
             }).then(snapshot => {
 
-                console.log(snapshot)
+                getDownloadURL(snapshot).then(url => {
 
-                let url = snapshot.metadata.downloadURLs[0]
-                liff.sendMessages([{
-                    type: 'text',
-                    text: message
-                }, {
-                    type: 'image',
-                    originalContentUrl: url,
-                    previewImageUrl: url
-                }]).then(() => {
-                    console.log('Message sent')
-                    liff.closeWindow();
+                    liff.sendMessages([{
+                        type: 'text',
+                        text: message
+                    }, {
+                        type: 'image',
+                        originalContentUrl: url,
+                        previewImageUrl: url
+                    }]).then(() => {
+                        console.log("Message sent");
+                        deleteObject(imageRef).then(() => {
+                            liff.closeWindow();
+                        })
+                    }).catch(error => {
+                        console.log("Error sending message: " + error);
+                    });
+
                 })
 
             })
