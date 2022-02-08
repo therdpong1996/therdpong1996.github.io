@@ -30,7 +30,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js"></script>
 
-    <script>
+    <script type="module">
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-app.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.6/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDuTUABGWT9yQCWua5A9LTDVe7DWlEVf-A",
@@ -43,8 +46,8 @@
         };
 
         // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
+        const firebaseApp = initializeApp(firebaseConfig);
+        const storage = getStorage(firebaseApp);
 
         const liff_id = "1656870852-kyrqq8vd"
         var profile = {};
